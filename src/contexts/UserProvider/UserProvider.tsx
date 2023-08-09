@@ -13,8 +13,9 @@ type UserContextData = {
 
 export type Reserva = {
   quadra: string;
-  date: Date;
+  date: string;
   hora: string;
+  user: String;
 };
 
 

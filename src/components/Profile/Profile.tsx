@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
+import React from 'react';
 //import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useUser } from '../../contexts/UserProvider/UserProvider';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 
 const Profile = () => {
   
@@ -13,17 +12,7 @@ const Profile = () => {
   
   const logout = () => {
     auth().signOut();
-  }
-
-  useEffect(() => {
-    const email = auth().currentUser?.email;
-    updateNick(email);
-    firestore()
-    .collection('users')
-    .where('email', '==', email)
-    .get()
-    .then(querySnapshot => {updateName(querySnapshot.docs[0].data().nome.toString())});
-  }, []);
+  };
 
   return (
     <View style={{flex: 1}}>

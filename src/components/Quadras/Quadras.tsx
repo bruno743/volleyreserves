@@ -4,6 +4,7 @@ import SelectDate from '../SelectDate/SelectDate';
 import SelectTime from '../SelectTime/SelectTime';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useUser, Reserva } from '../../contexts/UserProvider/UserProvider';
+import firestore from '@react-native-firebase/firestore';
 
 const Quadras = () => {
 
@@ -16,7 +17,7 @@ const Quadras = () => {
         },
     ];
     
-    const { updateReservas, reservas } = useUser();
+    const { updateReservas, reservas, nick } = useUser();
 
     const [modalVisible, setModalVisible] = useState(false);
     const [idQuadra, setId] = useState(1);
@@ -26,10 +27,53 @@ const Quadras = () => {
     const addReserva = (reserva:Reserva) => {
         const reservasUpdated = reservas.concat([reserva]);
         updateReservas(reservasUpdated);
-    }
+    };
 
     const alertReserva = () => {
-        Alert.alert('Erro ao reservar.', 'Preencha a data e hora.')
+        Alert.alert('Erro ao reservar.', 'Preencha a data e hora.');
+    };
+
+    const reservaInvalida = () => {
+        Alert.alert('Erro ao reservar.', 'Horário indispnível, selecione uma nova data e hora.');
+    };
+
+    const testDate = (date: Date, hora: String) => {
+        const dateComp = new Date();
+        if(date.getFullYear() !== dateComp.getFullYear()) return true;
+
+        if(date.getMonth() < dateComp.getMonth()) return true;
+        
+        if(date.getMonth() >= (dateComp.getMonth() + 2)) return true;
+
+        if(date.getMonth() === dateComp.getMonth()){
+            if(date.getDate() < dateComp.getDate()) return true;
+
+            if(
+                date.getDate() === dateComp.getDate()
+                && dateComp.getHours() > (parseInt(hora.slice(0,-3)) + 2)
+            ) return true;
+        }
+
+        return false;
+    };
+
+    const testeReserva = async (date: Date, hora: String, quadra: number) => {
+        let test = false;
+        await firestore().collection('reservas').get()
+        .then(querySnapshot => {
+            querySnapshot.docs.forEach(documentSnapshot => {
+                const dateReserved = new Date(documentSnapshot.data().date);
+
+                if(
+                    (dateReserved.getMonth() === date.getMonth())
+                    && (dateReserved.getDate() === date.getDate())
+                    && (hora === documentSnapshot.data().hora)
+                    && (quadra === documentSnapshot.data().quadra)
+                ) test = true;
+            });
+        });
+
+        return test;
     };
 
     return (
@@ -90,12 +134,28 @@ const Quadras = () => {
                                     >Cancelar</Text>
                                     <Text
                                         style={styles.pressText}
-                                        onPress={() => {
+                                        onPress={async () => {
                                             if(time.length < 1){
                                                 alertReserva();
+                                            } else if (testDate(date, time) || await testeReserva(date, time, idQuadra)) {
+                                                reservaInvalida();
                                             } else {
                                                 setModalVisible(!modalVisible);
-                                                addReserva({quadra: idQuadra.toString(), date: date, hora: time});
+                                                addReserva(
+                                                    {
+                                                        quadra: idQuadra.toString(),
+                                                        date: date.toString(),
+                                                        hora: time,
+                                                        user: nick
+                                                    });
+                                                firestore().collection('reservas').add(
+                                                    {
+                                                        date: date.toString(),
+                                                        quadra: idQuadra,
+                                                        hora: time,
+                                                        user: nick,
+                                                        
+                                                    });
                                                 setDate(new Date());
                                                 setTime('');
                                             }
