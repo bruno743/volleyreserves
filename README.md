@@ -68,8 +68,7 @@ $ npm install
 $ npm start
 ```
 
-Para a execução da aplicação desta forma é preciso ter um emulador configurado na máquina. Uma outra alternativa é instalar o
-arquivo **./android/app/build/outputs/apk/debug/apk-debug.apk** diretamente em seu dispositivo.
+Para a execução da aplicação desta forma é preciso ter um emulador configurado na máquina.
 
 ## Autores
 
@@ -81,3 +80,4 @@ arquivo **./android/app/build/outputs/apk/debug/apk-debug.apk** diretamente em s
 
 - Adicionar funcionalidade que simula pagamento
 - Melhorar os estilos
+- Adicionar testes
