@@ -5,7 +5,7 @@ const SelectTime = (props:any) => {
 
     const [hora, setHora] = useState('');
 
-    return <Center>
+    return (<Center>
         <Box maxW="300">
             <Select
                 selectedValue={hora}
@@ -27,7 +27,7 @@ const SelectTime = (props:any) => {
                 <Select.Item label="22:00" value="22:00" />
             </Select>
         </Box>
-        </Center>;
+        </Center>);
 };
 
 export default SelectTime;

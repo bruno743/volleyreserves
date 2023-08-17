@@ -53,12 +53,14 @@ const SignUp = () => {
           value={name}
           style={styles.input}
           onChangeText={setName}
+          testID='inputName'
         />
         <Text>Username:</Text>
         <TextInput
           value={nickName}
           style={styles.input}
           onChangeText={setNickName}
+          testID='inputUser'
         />
         <Text>Senha:</Text>
         <TextInput
@@ -66,6 +68,7 @@ const SignUp = () => {
           secureTextEntry={true}
           style={styles.input}
           onChangeText={setPassword}
+          testID='inputPassword'
         />
         <Text>Confirme a senha:</Text>
         <TextInput
@@ -73,6 +76,7 @@ const SignUp = () => {
           secureTextEntry={true}
           style={styles.input}
           onChangeText={setConfirmPassword}
+          testID='inputConfirmPassword'
         />
       </View>
       <View style={styles.actions}>

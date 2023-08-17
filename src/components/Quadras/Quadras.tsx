@@ -6,7 +6,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useUser, Reserva } from '../../contexts/UserProvider/UserProvider';
 import firestore from '@react-native-firebase/firestore';
 
-const Quadras = () => {
+interface Props {
+    hour?: string,
+    day?: Date
+};
+
+const Quadras = ({hour, day}: Props) => {
 
     const dataQuadras = [
         {
@@ -21,8 +26,8 @@ const Quadras = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [idQuadra, setId] = useState(1);
-    const [date, setDate] = useState(new Date());
-    const [time, setTime] = useState('');
+    const [date, setDate] = useState(day ? day : new Date());
+    const [time, setTime] = useState(hour ? hour : '');
 
     const addReserva = (reserva:Reserva) => {
         const reservasUpdated = reservas.concat([reserva]);
@@ -90,6 +95,7 @@ const Quadras = () => {
                             borderColor: '#1D5D9B',
                             borderRadius: 4,
                         }}
+                        testID='imageQuadra'
                     />
                     <Text style={{fontSize: 16}}>Esta é a quadra {item.id}</Text>
                     <Button
@@ -100,73 +106,76 @@ const Quadras = () => {
                         title='Reservar'
                         color={'#1D5D9B'}
                     />
-                    <Modal
-                        animationType='fade'
-                        transparent={true}
-                        visible={modalVisible}
-                    >
-                        <View style={styles.modalPosition}>
-                            <View style={styles.modalView}>
-                                <Text>Marcar data para quadra {idQuadra}</Text>
-                                <View style={styles.chooseTime}>
-                                    <Icon
-                                        name='today'
-                                        size={25}
-                                    />
-                                    <SelectDate getDate={setDate} quadra={idQuadra} />
-                                </View>
-                                <View style={styles.chooseTime}>
-                                    <Icon
-                                        name='schedule'
-                                        size={25}
-                                        style={{paddingTop: 12}}
-                                    />
-                                    <SelectTime getTime={setTime} />
-                                </View>
-                                <View style={styles.actionsModal}>
-                                    <Text
-                                        style={styles.pressText}
-                                        onPress={() => {
-                                            setModalVisible(!modalVisible);
-                                            setDate(new Date());
-                                            setTime('');
-                                        }}
-                                    >Cancelar</Text>
-                                    <Text
-                                        style={styles.pressText}
-                                        onPress={async () => {
-                                            if(time.length < 1){
-                                                alertReserva();
-                                            } else if (testDate(date, time) || await testeReserva(date, time, idQuadra)) {
-                                                reservaInvalida();
-                                            } else {
-                                                setModalVisible(!modalVisible);
-                                                addReserva(
-                                                    {
-                                                        quadra: idQuadra.toString(),
-                                                        date: date.toString(),
-                                                        hora: time,
-                                                        user: nick
-                                                    });
-                                                firestore().collection('reservas').add(
-                                                    {
-                                                        date: date.toString(),
-                                                        quadra: idQuadra,
-                                                        hora: time,
-                                                        user: nick,
-                                                        
-                                                    });
-                                                setDate(new Date());
-                                                setTime('');
-                                            }
-                                        }}
-                                    >Concluir</Text>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
                 </View>}
             />
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={modalVisible}
+                testID='modalReserves'
+            >
+                <View style={styles.modalPosition}>
+                    <View style={styles.modalView}>
+                        <Text testID='titleModal'>Marcar data para quadra {idQuadra}</Text>
+                        <View style={styles.chooseTime}>
+                            <Icon
+                                name='today'
+                                size={25}
+                                testID='calendarIcon'
+                            />
+                            <SelectDate getDate={setDate} quadra={idQuadra} />
+                        </View>
+                        <View style={styles.chooseTime}>
+                            <Icon
+                                name='schedule'
+                                size={25}
+                                style={{paddingTop: 12}}
+                                testID='clockIcon'
+                            />
+                            <SelectTime getTime={setTime} />
+                        </View>
+                        <View style={styles.actionsModal}>
+                            <Text
+                                style={styles.pressText}
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                    setDate(day ? day : new Date());
+                                    setTime(hour ? hour : '');
+                                }}
+                            >Cancelar</Text>
+                            <Text
+                                style={styles.pressText}
+                                onPress={async () => {
+                                    if(time.length < 1){
+                                        alertReserva();
+                                    } else if (testDate(date, time) || await testeReserva(date, time, idQuadra)) {
+                                        reservaInvalida();
+                                    } else {
+                                        setModalVisible(!modalVisible);
+                                        addReserva(
+                                            {
+                                                quadra: idQuadra.toString(),
+                                                date: date.toString(),
+                                                hora: time,
+                                                user: nick
+                                            });
+                                        firestore().collection('reservas').add(
+                                            {
+                                                date: date.toString(),
+                                                quadra: idQuadra,
+                                                hora: time,
+                                                user: nick,
+                                                
+                                            });
+                                            setDate(day ? day : new Date());
+                                            setTime(hour ? hour : '');
+                                    }
+                                }}
+                            >Concluir</Text>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }

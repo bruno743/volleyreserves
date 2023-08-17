@@ -27,11 +27,18 @@ const Profile = () => {
             logout();
             //navigation.navigate('Login');
           }}
+          testID='logoutIcon'
         />
       </View>
       <View style={styles.container}>
-        <Text style={{fontWeight: '900', textDecorationColor: '#000', fontSize: 24}}>{nick}</Text>
-        <Text style={{fontSize: 16, marginBottom: 35,}}>{nome}</Text>
+        <Text
+          style={{fontWeight: '900', textDecorationColor: '#000', fontSize: 24}}
+          testID='userTitle'  
+        >{nick}</Text>
+        <Text
+          style={{fontSize: 16, marginBottom: 35,}}
+          testID='usernameTitle'
+        >{nome}</Text>
         {reservas.map((item, index) => <View key={index} style={styles.reservesArea}>
             <Text style={styles.reservesText}>Quadra {item.quadra.toString()}: </Text>
             <Text style={styles.reservesText}>{item.date.toString().slice(4, -18)}</Text>

@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Button, TextInput, Alert } from 'react-native';
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, ParamListBase } from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import { useUser } from '../../contexts/UserProvider/UserProvider';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -8,13 +9,19 @@ import auth from '@react-native-firebase/auth';
 const Login = () => {
 
   const { isSigned, updateLog, updateNick, updateName } = useUser();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   
   const [nickName, setNickName] = useState('');
   const [password, setPassword] = useState('');
 
   const alertaLogin = () => {
     Alert.alert('Erro ao logar.', 'Usuário ou senha incorretos.');
+  };
+
+  const toSignUp = () => {
+    setNickName('');
+    setPassword('');
+    navigation.navigate('SignUp');
   };
 
   const login = () => {
@@ -43,6 +50,7 @@ const Login = () => {
           value={nickName}
           style={styles.input}
           onChangeText={setNickName}
+          testID='inputUser'
         />
         <Text>Senha:</Text>
         <TextInput
@@ -50,6 +58,7 @@ const Login = () => {
           secureTextEntry={true}
           style={styles.input}
           onChangeText={setPassword}
+          testID='inputPassword'
         />
       </View>
       <View style={styles.actions}>
@@ -60,12 +69,12 @@ const Login = () => {
             fontSize: 18,
           }}
           onPress={() => {
-            navigation.navigate('SignUp');
-            setNickName('');
-            setPassword('');
+            toSignUp();
           }}
+          testID='registerOptionClick'
         >Cadastro</Text>
         <Button
+            testID='loginButton'
             onPress={() => {
               if(nickName.length < 6 || password.length < 6){
                 alertaLogin();

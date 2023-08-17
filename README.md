@@ -80,4 +80,3 @@ Para a execução da aplicação desta forma é preciso ter um emulador configur
 
 - Adicionar funcionalidade que simula pagamento
 - Melhorar os estilos
-- Adicionar testes
